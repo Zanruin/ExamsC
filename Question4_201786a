@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+typedef struct node * ptr;
+typedef struct node{
+	unsigned id;
+	char name[26];
+	char date[6];
+	unsigned grade;
+	ptr next;
+}student;
+void createList(ptr*);
+void getInput(ptr);
+int isNull(ptr);
+void printList(ptr*);
+void checkLists(ptr*,ptr*);
+
+int main()
+{
+	ptr hptr = NULL;
+	ptr hptrb = NULL;
+	createList(&hptr);
+	printList(&hptr);
+	createList(&hptrb);
+	printList(&hptrb);
+	checkLists(&hptr,&hptrb);
+	return 0;
+}
+
+
+/*Create a list, We check if the entered pointer is null. In case its is we start from there and That gonna be the head of the list*/
+void createList(ptr *hptr)
+{
+	ptr current;
+	ptr next;
+	int ans;
+	ans = 0;
+	if(!*hptr)										/*We check if the pointer we got is NULL*/
+	{												/**/
+		current = (ptr) malloc(sizeof(student));
+		if(isNull(current)) exit(0);
+		getInput(current);
+		current->next = current;
+		*hptr=current;
+	}
+	do{
+		printf("wanna insert a member?\n1-yes, 0-no\n");
+        scanf("%d",&ans);
+		if(ans==1)
+		{
+			next = (ptr) malloc(sizeof(student));
+			if(isNull(next)) exit(0);
+			getInput(next);
+			current->next = next;
+			current = next;
+			next = NULL;
+		}
+		if(ans == 0)
+		{
+			current->next = *hptr;
+		}
+	}while(ans==1);
+}
+
+/*Get the inputs of the user to the cell of the nodes*/
+void getInput(ptr ptr)
+{
+	printf("Enter name of the Student, no longer than 25: \n");
+	scanf("%s",ptr->name);
+	printf("Enter the ID of the Student: ");
+	scanf("%u",&(ptr->id));
+	printf("Enter date of inscription:");
+	scanf("%s",ptr->date);
+	printf("Enter the grade of the Student");
+	scanf("%u",&(ptr->grade));
+}
+
+/*Check if the new allocated node could be made*/
+int isNull(ptr ptr){
+    if(!ptr){
+        printf("no memory!\n");
+        return 1;
+    }
+    else return 0;
+}
+
+/*Prints the list*/
+void printList(ptr *hptr)
+{
+	ptr current1;
+	current1 = *hptr;
+	while(current1->next != *hptr)
+	{
+		printf("The name of the Student is: %s\t with ID No.: %u\t joined on: %s\t student's grade is:%u\n",current1->name,current1->id,current1->date,current1->grade);
+		current1 = current1->next;
+	}
+	printf("The name of the Student is: %s\t with ID No.: %u\t joined on: %s\t student's grade is:%u\n",current1->name,current1->id,current1->date,current1->grade);
+}
+
+void checkLists(ptr *hptr, ptr *hptrb)
+{
+	ptr	currentA,currentB;
+	int flag;
+	currentA = *hptr;
+	currentB = *hptrb;
+	flag = 1;
+	while(flag && ((currentA->next !=*hptr) && (currentB->next !=*hptrb)))
+	{
+		if(currentA->id != currentB->id) flag=0;
+		currentA = currentA->next;
+		currentB = currentB->next;
+		
+	}
+	if(flag) printf("The two list are the same \n");
+	else
+		printf("The two list arent equal");
+}
