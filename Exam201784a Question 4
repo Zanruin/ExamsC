@@ -1,0 +1,132 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct node * ptr;
+typedef struct node{
+	int id;
+	int monthpay;
+	int resume;
+	ptr next;
+	ptr prev;
+}member;
+void createList(ptr*);
+void eraseMember(ptr*,int);
+void freeList(ptr*);
+int isNull(ptr);
+void printList(ptr*);
+
+
+int main()
+{
+	ptr head = NULL;
+	int member;
+	member = 0;
+	createList(&head);
+	printList(&head);
+	printf("\n");
+	printf("Enter the member you want to delete:");
+	scanf("%d",&member);
+	eraseMember(&head,member);
+	printList(&head);
+	return 0;
+}
+
+void createList(ptr *hptr)
+{
+	ptr current;
+	int ans;
+	ans = 0;
+	do{
+		printf("wanna insert a member?\n 1-yes, 0-no\n");
+		scanf("%d",&ans);
+		if(ans == 1 && *hptr == NULL)
+		{
+			printf("Enter the ID Monthpay Resume with spaces(No commas needed): \n");
+			current = (ptr) malloc(sizeof(member));
+			scanf("%d %d %d", &(current->id),&(current->monthpay),&(current->resume));
+			current->next = (ptr) malloc(sizeof(member));
+			if(isNull(current) || isNull(current->next)) exit(1);
+			current->next->prev = current;
+			*hptr = current;
+			current = current->next;
+		}
+		else if(ans == 1)
+		{
+			printf("Enter the ID Monthpay Resume with spaces(No commas needed):\n");
+            scanf("%d %d %d", &(current->id),&(current->monthpay),&(current->resume));
+            current->next = (ptr) malloc(sizeof(member));
+            if(isNull(current->next)) exit(1);
+            current->next->prev = current;
+            current = current->next;
+		}
+	}while(ans==1);	
+	
+}
+
+int isNull(ptr ptr)
+{
+	if(!ptr)
+	{
+		printf("Memory allocation failed in getNode\n");
+		return 1;
+	}
+	else
+		return 0;
+}
+
+void printList(ptr *hptr)
+{
+	ptr current;
+	current = *hptr;
+	while(current->next !=NULL)
+	{
+		printf("The ID of the member is: %d \t the fee is: %d \t the resume is: %d \n",current->id,current->monthpay,current->resume);
+		current = current->next;
+	}
+}
+
+/*Looks for a member that has the same value as the ID*/
+void eraseMember(ptr *hptr,int id)
+{
+	ptr prev,next,current;
+	current = *hptr;
+	/*Looking for node with value of ID*/
+	while(current->id != id && current !=NULL) 		/*Check if the current node isnt like the ID and if not NULL */
+	{
+			current = current->next;
+	}
+
+	if(current == *hptr)
+	{
+		next =current->next;
+		next->prev = NULL;
+		free(current);
+		*hptr = next;		
+	}
+	else if(current != NULL)
+	{
+		prev = current->prev;
+		next = current->next;
+		prev->next = next;
+		next->prev = prev;
+		free(current);
+	}
+	else
+		printf("The Member with ID %d does not exist",id);
+}
+
+/*Function get Head's pointer, and free all nodes of the List*/
+void freeList(ptr *hptr)
+{
+	ptr next,current;
+	current = *hptr;
+	while(current->next != NULL)
+	{
+		current->prev = NULL;
+		next = current->next;
+		current->next = NULL;
+		free(current);
+		current = next;
+	}
+}
+
